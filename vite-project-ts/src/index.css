@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.height{
+    height: 440px;
+}
+
+.size{
+    font-size: 25px;
+}
+
+.sizeSpan{
+    font-size: 15px !important;
+}

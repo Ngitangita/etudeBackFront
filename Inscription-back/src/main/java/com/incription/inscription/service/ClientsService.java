@@ -21,7 +21,7 @@ public class ClientsService implements CrudOperations<Clients, Long>{
 
     @Override
     public Clients findById(Long id){
-        return this.clientsRepository.findById ( id ).orElse ( null );
+        return this.clientsRepository.findById ( id ).orElseThrow();
     }
 
     @Override

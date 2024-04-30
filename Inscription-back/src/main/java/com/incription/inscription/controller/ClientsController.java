@@ -19,6 +19,11 @@ public class ClientsController {
         return this.clientsService.findAll ();
     }
 
+    @GetMapping("/{id}")
+    public Clients getClient(@PathVariable Long id){
+        return this.clientsService.findById(id);
+    }
+
     @PostMapping("/add")
     public Clients createClient (@RequestBody Clients clients){
         return this.clientsService.save ( clients );
@@ -30,6 +35,7 @@ public class ClientsController {
         return this.clientsService.updateById(clients);
     }
     // 
+
 
     @DeleteMapping("/delete/{id}")
     public Clients delete (@PathVariable Long id){
