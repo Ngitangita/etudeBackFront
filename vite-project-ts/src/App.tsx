@@ -6,6 +6,7 @@ import ProductPage from "./pages/ProductPage";
 import CreateClientForm from "./pages/CreateClientPage";
 import EditClientPage from "./pages/EditClientPage";
 import Zod from "./pages/Zod";
+import ReactHookForm from "./pages/ReactHookForm";
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
       <Route path="/clients" element={<ClientPage/>} />
       <Route path="/stock" element={<StockPage />} />
       <Route path="/zod" element={<Zod />} />
+      <Route path="/reactHookForm" element={<ReactHookForm />} />
       <Route path="/*" element={<h1>Route not found!</h1>} />
     </Routes>
   </BrowserRouter>

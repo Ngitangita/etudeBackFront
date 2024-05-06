@@ -1,18 +1,30 @@
 import { ChangeEvent, FormEvent, useState } from "react"
-import { ClientType } from "../types/type"
-// import { setUp } from "../axios/Axios";
 import { useNavigate } from "react-router-dom";
+import { z } from "zod";
+import { setUp } from "../axios/axios";
+
+const ClientSchema = z.object({
+  id: z.number().optional(),
+  firstName: z.string().min(2).max(150),
+  lastName: z.string().min(2).max(150),
+  address: z.string().min(2),
+  phoneNumber: z.string().min(10).max(13),
+  email: z.string().email()
+})
+
+type ClientType = z.infer<typeof ClientSchema>;
 
 export default function CreateClientForm() {
   const navigate = useNavigate()
+  const [errors, setErrors] = useState<Record<string, string[]>>({});
 
   const [client, setClient] = useState<ClientType>({
     firstName: "",
     lastName: "",
     address: "",
-    phoneNumber: 0,
-    email: ""
-  })
+    phoneNumber: "",
+    email: "",
+  });
 
   const onChangeData = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -25,31 +37,39 @@ export default function CreateClientForm() {
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // void postClient()
-      try {
-        const res = await fetch("http://localhost:8086/clients/add", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(client)
-      })
-      const data = await res.json()
-      navigate("/orders")
-      return data
-      } catch (error) {
-        console.error(error);
-        
-      }
+
+
+    const validate = ClientSchema.safeParse(client);
+    if (validate.success) {
+      setErrors({});
+      // try {
+      //   const res = await fetch("http://localhost:8086/clients/add", {
+      //     method: "POST",
+      //     headers: { "Content-Type": "application/json" },
+      //     body: JSON.stringify(client),
+      //   });
+      //   if (!res.ok) {
+      //     throw new Error("Failed to add client");
+      //   }
+      //   navigate("/clients");
+      // } catch (error) {
+      //   console.error(error);
+      // }
+      void postClient()
+    } else {
+      setErrors(validate.error.flatten().fieldErrors);
+    }
   }
 
-  // const postClient = async () => {
-  //   try {
-  //     const res = await setUp()
-  //       .post("/clients/add", client)
-  //       navigate('/orders')
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }
+  const postClient = async () => {
+    try {
+      const res = await setUp()
+        .post("/clients/add", client)
+        navigate("/clients");
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
 
   return (
@@ -69,6 +89,7 @@ export default function CreateClientForm() {
             onChange={onChangeData}
             value={client.firstName}
           />
+          {errors.firstName && <span>{errors.firstName[0]}</span>}
         </div>
         <div className="flex flex-col gap-2">
           <label htmlFor="lastName" className="text-slate-500">
@@ -79,6 +100,7 @@ export default function CreateClientForm() {
             onChange={onChangeData}
             value={client.lastName}
           />
+          {errors.lastName && <span>{errors.lastName[0]}</span>}
         </div>
         <div className="flex flex-col gap-2">
           <label htmlFor="address" className="text-slate-500">
@@ -89,6 +111,7 @@ export default function CreateClientForm() {
             onChange={onChangeData}
             value={client.address}
           />
+          {errors.address && <span>{errors.address[0]}</span>}
         </div>
         <div className="flex flex-col gap-2">
           <label htmlFor="email" className="text-slate-500">
@@ -99,6 +122,7 @@ export default function CreateClientForm() {
             onChange={onChangeData}
             value={client.email}
           />
+          {errors.email && <span>{errors.email[0]}</span>}
         </div>
         <div className="flex flex-col gap-2">
           <label htmlFor="phoneNumber" className="text-slate-500">
@@ -109,9 +133,11 @@ export default function CreateClientForm() {
             onChange={onChangeData}
             value={client.phoneNumber}
           />
+          {errors.phoneNumber && <span>{errors.phoneNumber[0]}</span>}
         </div>
         <button className="w-32 bg-orange-300 relative left-1/3 p-2 hover:scale-110 transition">Envoyez</button>
       </form>
     </div>
   )
 }
+
